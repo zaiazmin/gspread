@@ -1,16 +1,17 @@
 from flask import Flask, render_template, jsonify
 import json
 import os
+from models import db, User, ToolHolder, Insert
 
 app = Flask(__name__)
 
-# Load data relative to this file
+# Configure SQLite Database
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_FILE = os.path.join(BASE_DIR, '..', 'design_specs', 'sample_data.json')
+DB_PATH = os.path.join(BASE_DIR, 'inventory.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-def load_data():
-    with open(DATA_FILE, 'r') as f:
-        return json.load(f)
+db.init_app(app)
 
 @app.route('/')
 def dashboard():
@@ -18,32 +19,59 @@ def dashboard():
 
 @app.route('/api/data')
 def get_data():
-    data = load_data()
+    # Fetch data from Database
+    tools = ToolHolder.query.all()
+    inserts = Insert.query.all()
+    users = User.query.all()
 
-    # Calculate some summary metrics for the dashboard
-    total_tools = sum(t['stock'] for t in data.get('tool_holders', []))
-    total_inserts = sum(i['stock_quantity'] for i in data.get('inserts', []))
+    # Calculate summary metrics
+    total_tools = sum(t.stock for t in tools)
+    total_inserts = sum(i.stock_quantity for i in inserts)
 
     low_stock_inserts = [
-        i for i in data.get('inserts', [])
-        if i['stock_quantity'] <= i['min_alert_level']
+        i for i in inserts
+        if i.stock_quantity <= i.min_alert_level
     ]
 
-    active_loans = 3 # Hardcoded mock from "Active Loans" design spec
+    active_loans = 3 # Still mocked until Loan table logic is added
 
     summary = {
         'total_tools': total_tools,
         'total_inserts': total_inserts,
         'low_stock_count': len(low_stock_inserts),
         'active_loans': active_loans,
-        'low_stock_items': low_stock_inserts
+        'low_stock_items': [{
+            'iso_code': i.iso_code,
+            'manufacturer': i.manufacturer,
+            'stock_quantity': i.stock_quantity,
+            'min_alert_level': i.min_alert_level
+        } for i in low_stock_inserts]
+    }
+
+    # Serialize for JSON response
+    raw_data = {
+        'tool_holders': [{
+            'iso_code': t.iso_code,
+            'category': t.category,
+            'description': t.description,
+            'location': t.location,
+            'stock': t.stock
+        } for t in tools],
+        'inserts': [], # Not needed for dashboard table currently
+        'users': [{'username': u.username, 'role': u.role} for u in users]
     }
 
     return jsonify({
-        'raw_data': data,
+        'raw_data': raw_data,
         'summary': summary
     })
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
+    # Auto-create DB if not exists (for convenience)
+    if not os.path.exists(DB_PATH):
+        print("Database not found. Initializing...")
+        import init_db
+        init_db.init_db()
+
     app.run(host='0.0.0.0', port=port, debug=True)
