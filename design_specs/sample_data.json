@@ -1,0 +1,105 @@
+{
+  "users": [
+    {
+      "user_id": 1,
+      "username": "jdoe_student",
+      "role": "student",
+      "full_name": "John Doe",
+      "department": "Mechanical Engineering"
+    },
+    {
+      "user_id": 2,
+      "username": "prof_smith",
+      "role": "instructor",
+      "full_name": "Dr. Sarah Smith",
+      "department": "Manufacturing Tech"
+    },
+    {
+      "user_id": 3,
+      "username": "tech_mike",
+      "role": "technician",
+      "full_name": "Mike Ross",
+      "department": "CNC Lab"
+    }
+  ],
+  "tool_holders": [
+    {
+      "id": 101,
+      "iso_code": "DCLNR 2525 M12",
+      "category": "Turning",
+      "description": "External turning holder, clamp style, negative rake",
+      "compatible_inserts": ["CNMG 12 04 08", "CNMG 12 04 04"],
+      "stock": 5,
+      "location": "Cabinet A-12"
+    },
+    {
+      "id": 102,
+      "iso_code": "BT40-ER32-70",
+      "category": "Milling",
+      "description": "Collet Chuck Holder BT40 taper, ER32 collet",
+      "compatible_inserts": [],
+      "stock": 12,
+      "location": "Cabinet B-04"
+    },
+    {
+      "id": 103,
+      "iso_code": "APKT-20-Endmill",
+      "category": "Milling",
+      "description": "Indexable End Mill 20mm",
+      "compatible_inserts": ["APKT 1003"],
+      "stock": 4,
+      "location": "Cabinet B-05"
+    }
+  ],
+  "inserts": [
+    {
+      "id": 501,
+      "iso_code": "CNMG 12 04 08-PM",
+      "grade": "GC4325",
+      "material_app": "Steel (P)",
+      "coating": "CVD TiCN+Al2O3+TiN",
+      "manufacturer": "Sandvik Coromant",
+      "stock_quantity": 45,
+      "min_alert_level": 10,
+      "box_quantity": 10
+    },
+    {
+      "id": 502,
+      "iso_code": "APKT 1003 PDTR",
+      "grade": "IC908",
+      "material_app": "Universal (M)",
+      "coating": "PVD TiAlN",
+      "manufacturer": "Iscar",
+      "stock_quantity": 8,
+      "min_alert_level": 20,
+      "box_quantity": 10
+    },
+    {
+      "id": 503,
+      "iso_code": "VCGT 16 04 04-AL",
+      "grade": "H10",
+      "material_app": "Aluminum (N)",
+      "coating": "Uncoated / Polished",
+      "manufacturer": "Korloy",
+      "stock_quantity": 100,
+      "min_alert_level": 15,
+      "box_quantity": 10
+    }
+  ],
+  "machines": [
+    {
+      "id": "M1",
+      "name": "Haas VF-2",
+      "type": "VMC",
+      "controller": "Haas NextGen",
+      "spindle": "CAT40"
+    },
+    {
+      "id": "M2",
+      "name": "Mazak Quick Turn 250",
+      "type": "Turning Center",
+      "controller": "Mazatrol",
+      "spindle": "VDI40"
+    }
+  ]
+}
